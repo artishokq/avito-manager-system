@@ -35,6 +35,7 @@ type FilterPanelProps = {
   availableCategories: CategoryValue[];
   onChange: (next: FiltersState) => void;
   onReset: () => void;
+  searchInputRef?: React.Ref<HTMLInputElement>;
 };
 
 const DEFAULT_STATUSES: { value: StatusValue; label: string }[] = [
@@ -49,6 +50,7 @@ function FilterPanel({
   availableCategories,
   onChange,
   onReset,
+  searchInputRef,
 }: FilterPanelProps) {
   const handleStatusToggle = (value: StatusValue) => {
     const exists = filters.statuses.includes(value);
@@ -200,6 +202,7 @@ function FilterPanel({
           label="Поиск по названию"
           fullWidth
           value={filters.search}
+          inputRef={searchInputRef}
           onChange={(e) => handleSearchChange(e.target.value)}
         />
       </Box>

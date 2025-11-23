@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -22,6 +22,7 @@ import {
 function ListPage() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const searchInputRef = useRef<HTMLInputElement | null>(null);
 
   const {
     items: ads,
@@ -38,6 +39,29 @@ function ListPage() {
   useEffect(() => {
     dispatch(fetchAds());
   }, [dispatch, page, filters, sort]);
+
+  // Горячая клавиша "/" фокус на поиск
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName.toLowerCase();
+        if (tag === "input" || tag === "textarea") return;
+        if (target.getAttribute("contenteditable") === "true") return;
+      }
+
+      if (e.key === "/") {
+        e.preventDefault();
+        if (searchInputRef.current) {
+          searchInputRef.current.focus();
+          searchInputRef.current.select?.();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, []);
 
   const handleResetFilters = () => {
     dispatch(resetFilters());
@@ -64,6 +88,7 @@ function ListPage() {
           availableCategories={categories}
           onChange={(next) => dispatch(setFilters(next))}
           onReset={handleResetFilters}
+          searchInputRef={searchInputRef}
         />
 
         <Box flex={1}>
