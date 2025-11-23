@@ -15,11 +15,15 @@ import {
 } from "@mui/material";
 
 type StatusValue = "pending" | "approved" | "rejected";
-type CategoryValue = string;
+
+export type CategoryValue = {
+  id: number;
+  name: string;
+};
 
 export type FiltersState = {
   statuses: StatusValue[];
-  category: CategoryValue | "";
+  categoryId: number | null;
   priceFrom: number | null;
   priceTo: number | null;
   search: string;
@@ -55,8 +59,8 @@ function FilterPanel({
     onChange({ ...filters, statuses: nextStatuses });
   };
 
-  const handleCategoryChange = (value: CategoryValue | "") => {
-    onChange({ ...filters, category: value });
+  const handleCategoryChange = (value: number | null) => {
+    onChange({ ...filters, categoryId: value });
   };
 
   const handlePriceChange = (_: Event, value: number | number[]) => {
@@ -73,7 +77,7 @@ function FilterPanel({
   };
 
   const priceMin = 0;
-  const priceMax = 100000;
+  const priceMax = 120000;
 
   const sliderValue: [number, number] = [
     filters.priceFrom ?? priceMin,
@@ -126,17 +130,19 @@ function FilterPanel({
           <Select
             labelId="category-label"
             label="Категория"
-            value={filters.category}
-            onChange={(e) =>
-              handleCategoryChange(e.target.value as CategoryValue | "")
-            }
+            value={filters.categoryId ?? ""}
+            onChange={(e) => {
+              const raw = e.target.value;
+              const str = String(raw);
+              handleCategoryChange(str === "" ? null : Number(str));
+            }}
           >
             <MenuItem value="">
               <em>Все категории</em>
             </MenuItem>
             {availableCategories.map((cat) => (
-              <MenuItem key={cat} value={cat}>
-                {cat}
+              <MenuItem key={cat.id} value={cat.id}>
+                {cat.name}
               </MenuItem>
             ))}
           </Select>
