@@ -2,11 +2,7 @@ import { useLocation } from "react-router-dom";
 
 import styles from "./Header.module.css";
 
-type HeaderProps = {
-  itemTitle?: string;
-};
-
-function Header({ itemTitle }: HeaderProps) {
+function Header() {
   const location = useLocation();
 
   let title = "Система управления объявлениями";
@@ -14,7 +10,7 @@ function Header({ itemTitle }: HeaderProps) {
   if (location.pathname.startsWith("/list") || location.pathname === "/") {
     title = "Список объявлений";
   } else if (location.pathname.startsWith("/item/")) {
-    title = itemTitle || "Карточка объявления";
+    title = "Карточка объявления";
   } else if (location.pathname.startsWith("/stats")) {
     title = "Статистика";
   }

@@ -24,6 +24,31 @@ export type AdsResponse = {
   limit: number;
 };
 
+export type ModerationHistoryItem = {
+  id: number;
+  moderatorId: number;
+  moderatorName: string;
+  action: "approved" | "rejected" | "returned" | string;
+  reason: string | null;
+  comment: string | null;
+  timestamp: string;
+};
+
+export type SellerInfo = {
+  id: number;
+  name: string;
+  rating: string;
+  totalAds: number;
+  registeredAt: string;
+};
+
+export type FullAd = Ad & {
+  description: string;
+  seller: SellerInfo;
+  characteristics: Record<string, string>;
+  moderationHistory: ModerationHistoryItem[];
+};
+
 export async function fetchAdsApi(
   page: number,
   pageSize: number,
@@ -77,4 +102,9 @@ export async function fetchAdsApi(
     page: data.pagination?.currentPage ?? page,
     limit: data.pagination?.itemsPerPage ?? pageSize,
   };
+}
+
+export async function fetchAdByIdApi(id: string | number): Promise<FullAd> {
+  const { data } = await http.get<FullAd>(`/ads/${id}`);
+  return data;
 }
