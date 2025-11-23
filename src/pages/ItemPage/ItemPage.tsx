@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useCallback } from "react";
 import {
   Box,
   Button,
@@ -54,17 +54,40 @@ function ItemPage() {
     return listAds.findIndex((ad) => String(ad.id) === String(id));
   }, [listAds, id]);
 
-  const handlePrev = () => {
+  const handlePrev = useCallback(() => {
     if (currentIndex <= 0) return;
     const prevAd = listAds[currentIndex - 1];
     navigate(`/item/${prevAd.id}`);
-  };
+  }, [currentIndex, listAds, navigate]);
 
-  const handleNext = () => {
+  const handleNext = useCallback(() => {
     if (currentIndex === -1 || currentIndex >= listAds.length - 1) return;
     const nextAd = listAds[currentIndex + 1];
     navigate(`/item/${nextAd.id}`);
-  };
+  }, [currentIndex, listAds, navigate]);
+
+  // Горячие клавиши: ← предыдущее, → следующее
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName.toLowerCase();
+        if (tag === "input" || tag === "textarea") return;
+        if (target.getAttribute("contenteditable") === "true") return;
+      }
+
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        handlePrev();
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        handleNext();
+      }
+    };
+
+    window.addEventListener("keydown", handler);
+    return () => window.removeEventListener("keydown", handler);
+  }, [handlePrev, handleNext]);
 
   if (isLoading || !item) {
     return (
