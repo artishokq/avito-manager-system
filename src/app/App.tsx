@@ -1,7 +1,9 @@
-import "./App.css";
+import RouterBuilder from "./RouterBuilder";
+
+import "./styles/App.css";
 
 function App() {
-  return null;
+  return <RouterBuilder />;
 }
 
 export default App;
